@@ -1,0 +1,9 @@
+int p2_malloc(char* tokens[], int ntokens);
+int p2_shared(char* tokens[], int ntokens);
+int p2_mmap(char* tokens[], int ntokens);
+int p2_read(char* tokens[], int ntokens);
+int p2_write(char* tokens[], int ntokens);
+int p2_memdump(char* tokens[], int ntokens);
+int p2_memfill(char* tokens[], int ntokens);
+int p2_mem(char* tokens[], int ntokens);
+int p2_recurse(char* tokens[], int ntokens);

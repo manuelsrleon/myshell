@@ -1,0 +1,9 @@
+int makefile(char *tokens[], int ntokens);
+int makedir(char *tokens[], int ntokens);
+int listfile(char *tokens[], int ntokens);
+int cwd(char *tokens[], int ntokens);
+int listdir(char *tokens[], int ntokens);
+int reclist(char *tokens[], int ntokens);
+int revlist(char *tokens[], int ntokens);
+int erase(char *tokens[], int ntokens);
+int delrec(char *tokens[], int ntokens);
