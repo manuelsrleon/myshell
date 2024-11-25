@@ -56,14 +56,104 @@ on the usage of comand cmd
 - [X] makedir
     - makedir
     - makedir [name]
-- [ ] listfile
+- [X] listfile
     - [X] listfile
     - [X] listfile -long
-    - [ ] listfile -link
-    - [ ] listfile -acc
+    - [X] listfile -link 0.5pomo
+    - [X] listfile -acc 0.5pomo
 - [X] cwd
-listdir
-reclist
-revlist
-erase
-delrec
+- [ ] listdir
+    - [X] -hid  {
+    - [X] -long
+    - [X] -link
+    - [X] -acc }1+ pomo
+    - [ ] varios
+- [ ] reclist
+- [ ] revlist
+- [X] erase 0.3pomo 
+    - [X] TEST: dir vacio
+    - [X] TEST: symlink
+    - [X] TEST: archivo normal en carpeta
+    - [X] TEST: dir con algo -> error
+    - [X] TEST: archivo dentro de dir
+    - [X] TEST: 0 tokens
+    - [X] TEST: varios archivos
+- [ ] delrec 1+pomo
+    - [ ] TEST: directorio con cosas
+    - [ ] TEST: varios directorios
+    - [ ] TEST: varios directorios con cosas
+# p2 
+- [ ] List implementation
+
+- [ ] allocate
+    - [ ] allocate -malloc -n
+    - [ ] allocate -mmap file perm
+    - [ ] allocate -create cl n
+    - [ ] allocate -shared cl
+- [ ] deallocate
+    - [ ] deallocate -malloc
+    - [ ] deallocate -mmap
+    - [ ] deallocate -shared cl
+    - [ ] deallocate -delkey cl
+    - [ ] deallocate addr
+- [ ] memfill addr cont ch
+- [ ] memdump addr cont
+- [ ] memory
+    - [X] memory -funcs
+    - [X] memory -blocks
+    - [X] memory -vars
+    - [ ] memory -all --de momento no hace todas
+    - [ ] memory -pmap
+    Con el parámetro `-funcs` imprimimos las direcciones de 3 funciones del programa y 3 funciones de librería. En la shell original vemos que las direcciones están en rangos de direcciones completamente distintos:
+        ```
+Variables locales       0x7ffde0c9abcc,    0x7ffde0c9abc8,    0x7ffde0c9abc4
+Variables globales      0x562111f862f8,    0x562111f862f0,    0x562111f862f4
+Var (N.I.)globales      0x562111f97e68,    0x562111f97e70,    0x562111f97e78
+Variables staticas      0x562111f862fc,    0x562111f86300,    0x562111f86304
+Var (N.I.)staticas      0x562111fab780,    0x562111fab788,    0x562111fab790
+Funciones programa      0x562111f76e97,    0x562111f76c98,    0x562111f76da0
+Funciones libreria      0x7f82740606f0,    0x7f827407f380,    0x7f82740a50a0
+``` 
+        Esto es debido a que cuando el programa se inicializa, las funciones del programa se cargan dentro del espacio de memoria del programa, pero las funciones de librería se cargan en otra región distinta, la asociada a {STACK | HEAP}.
+        Lo mismo apreciamos en el caso de las variables: 
+        Las variables locales están reservadas en una región cercana a la de la librería, mientras que el resto de variables se reservan en regiones más próximas.
+        En el caso de las variables      , están separadas por 8 unidades (8 bits).
+        El tamaño de int dependerá del compilador, por lo que podemos hacer sizeof(int) para saber cuánto ocupa en nuestro sistema.
+        Haciendo sizeof en mi máquina, vemos que el tamaño asociado es de 4 bytes, lo cual significa que cada variable estará situada en.
+        El stack crece hacia abajo (siendo abajo las direcciones bajas), y el heap crece hacia arriba.
+        Según GeeksForGeeks, en un programa escrito en C tenemos: 
+            1: Segmento de texto: Contiene las instrucciones ejecutables por el programa. Debe emplazarse por debajo del heap o el stack para evitar poder sobreescribirlo mediante overflows.
+            2: Segmento de datos inicializados: Se llama a veces "segmento de datos" a secas. Es una porción del espacio de direcciones virtuales del programa, que contiene las variables globales y estáticas inicializadas por el programador. Es por ello que podemos localizar las local
+            3: Segmento de datos no inicializados
+            4: Heap (montículo)
+            5: Stack
+        
+        Una cosa a observar es que las variables no inicializadas siempre están por encima de sus contrapartes inicializadas. (?)
+
+- [ ] readfile addr cont
+- [ ] writefile addr cont
+- [ ] read  df addr cont
+- [ ] write df addr cont
+- [X] recurse n
+Salida de la función recurse:
+```
+parametro:  5(0x7fffa2d294bc) array 0x7fffa2d294c0, arr estatico 0x55a666678280
+parametro:  4(0x7fffa2d2928c) array 0x7fffa2d29290, arr estatico 0x55a666678280
+parametro:  3(0x7fffa2d2905c) array 0x7fffa2d29060, arr estatico 0x55a666678280
+parametro:  2(0x7fffa2d28e2c) array 0x7fffa2d28e30, arr estatico 0x55a666678280
+parametro:  1(0x7fffa2d28bfc) array 0x7fffa2d28c00, arr estatico 0x55a666678280
+parametro:  0(0x7fffa2d289cc) array 0x7fffa2d289d0, arr estatico 0x55a666678280
+```
+En la función "recurse" se declaran dos variables. Por un lado, se reserva un array de chars "automático" y un array de chars estático.
+
+La palabra automático es la "storage class" por defecto. Es por eso que raramente se utiliza el nombre. Solamente se pueden acceder desde el scope donde se han declarado. Estas variables van al segmento de datos no inicializados,
+
+Por otra parte, el array de chars estático se inicializa junto a las variables globales. Las variables estáticas tienen la propiedad de que su valor no cambia incluso fuera del scope y fuera de llamadas de funciones, y se guarda en el segmento de datos correspondiente a las variables globales.
+
+En las subsecuentes llamadas recursivas vemos cómo las nuevas llamadas van reservando memoria para las nuevas llamadas, mientras que el array estático permanece en la misma posición.
+
+
+
+Fuentes:
+Storage classes en C - GeeksForGeeks
+C Program Structure - GeeksForGeeks

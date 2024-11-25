@@ -17,6 +17,9 @@
 #include "modules/p1-filesystems.h"
 
 #include "modules/cmdlist/cmdlist.h"
+//p2
+#include "modules/p2-memory.h"
+#include "modules/memorylist/memorylist.h"
 
 #include "modules/common/common.h"
 
@@ -62,17 +65,27 @@ struct cmd cmds[] = {
         {"makedir", makedir, "creates a directory"},
         {"listfile", listfile, "gives information on files or directories"},
         {"cwd", cwd, "prints current working directory"},
-        // {"listdir", listdir, "lists directories contents"},
+        {"listdir", listdir, "lists directories contents"},
         // {"reclist", reclist, "lists directories recursively (subdirectories after)"},
         // {"revlist", revlist, "lists directories recursively (subdirectories before)"},
-        // {"erase", erase, "deletes files and/or empty directories"},
-        // {"delrec", delrec, "deletes files and/or non empty directories recursively"},
+        {"erase", erase, "deletes files and/or empty directories"},
+        {"delrec", delrec, "deletes files and/or non empty directories recursively"},
         // {"create", create, "Usage: create [-f] [name]\nCreates files or directories.\n\n"},
         // {"stat", _stat, "Usage: create [name]\nCreates files or directories.\n\n"},
         // {"list", list, "Usage: list [name]\nGives information on files or directories\n\n"},--
         // {"delete", _delete, "Usage: delete [name]\ndeletes files and/or empty directories\n\n"},
         // {"deltree", deltree, "Usage: deltree [name]\ndeletes files and/or non empty directories recursively\n\n"},
         //P2
+        {"allocate", allocate, ""},
+        // {"deallocate", deallocate, ""},
+        // {"memfill", memfill, ""},
+        // {"memdump", memdump, ""},
+         {"memory", memory, ""},
+        // {"readfile", readfile, ""},
+        // {"writefile", writefile, ""},
+        // {"read", read, ""},
+        // {"write", write, ""},
+        {"recurse", recurse, ""},
         //P3
         {NULL, NULL,"you shouldn't be able to read this."}
 };
