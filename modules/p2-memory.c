@@ -3,6 +3,9 @@
 #include <stdio.h>
 #define TAMANO 512
 #include "common/common.h"
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
  int allocate(char* tokens[], int ntokens){
     
@@ -18,6 +21,7 @@
     if(ntokens==3 && opt_malloc){
         unsigned long tam = (size_t) strtoul(tokens[2],NULL,10);
         void * p; 
+        //TODO error handling
         p = malloc(tam); 
         printf("Asignados %lu bytes en %p\n",tam,p);
         //save in list
@@ -73,8 +77,59 @@ int deallocate(char* tokens[], int ntokens){
     }
     return 0;
 }
-// int memfill(char* tokens[], int ntokens);
-// int memdump(char* tokens[], int ntokens);
+
+void LlenarMemoria (void *p, size_t cont, unsigned char byte)
+{
+  unsigned char *arr=(unsigned char *) p;
+  size_t i;
+
+  for (i=0; i<cont;i++)
+		arr[i]=byte;
+}
+int memfill(char* tokens[], int ntokens){
+    //memfil addr cont ch
+    if(ntokens == 4){
+        void * _addr = (void*) strtoul(tokens[1], NULL, 16);
+        size_t _cont = (size_t) strtoul(tokens[2],NULL,10);
+        unsigned char _byte = strtoul(tokens[3], NULL, 16);
+        printf("Filling %s bytes in memory with value %d at address %p\n",tokens[2], _byte, _addr);
+        LlenarMemoria(_addr,_cont,_byte);
+        return 0;
+    }else{
+    // throwWrongSyntaxError("memfill:");
+        return 0;
+    }
+}
+int memdump(char* tokens[], int ntokens){
+    //memdump addr cont
+    if(ntokens == 3 || ntokens == 2){
+
+        void *_addr = (void*) strtoul(tokens[1],NULL,16);
+        if(ntokens == 2){
+            tokens[2] = "25";
+        }
+        size_t _cont = 25;
+        if(ntokens == 3){
+            _cont = (size_t) strtoul(tokens[2], NULL, 10);
+        }
+
+        unsigned char *arr = (unsigned char* ) _addr;
+
+        printf("Dumping %s bytes of memory from address %p\n", tokens[2], _addr);
+        for(int i = 0; i < _cont; i++){
+            if( i% 10 == 0 && i != 0){
+                printf("\n");
+            }
+            printf("%02x ", arr[i]);//0-9 10
+        }
+        printf("\n");
+        return 0;
+    }else{
+        //throwWrongSyntaxError("memdump");
+        return 0;
+    }
+
+}
 
 int printMemoryList(){
     //list print stub
@@ -88,6 +143,35 @@ int gVar3 = 1312;
 int ugVar1 = 42;
 int ugVar2 = 1337;
 int ugVar3 = 1312;
+void Do_pmap (void) /*sin argumentos*/
+ { pid_t pid;       /*hace el pmap (o equivalente) del proceso actual*/
+   char elpid[32];
+   char *argv[4]={"pmap",elpid,NULL};
+   
+   sprintf (elpid,"%d", (int) getpid());
+   if ((pid=fork())==-1){
+      perror ("Imposible crear proceso");
+      return;
+      }
+   if (pid==0){
+      if (execvp(argv[0],argv)==-1)
+         perror("cannot execute pmap (linux, solaris)");
+         
+      argv[0]="procstat"; argv[1]="vm"; argv[2]=elpid; argv[3]=NULL;   
+      if (execvp(argv[0],argv)==-1)/*No hay pmap, probamos procstat FreeBSD */
+         perror("cannot execute procstat (FreeBSD)");
+         
+      argv[0]="procmap",argv[1]=elpid;argv[2]=NULL;    
+            if (execvp(argv[0],argv)==-1)  /*probamos procmap OpenBSD*/
+         perror("cannot execute procmap (OpenBSD)");
+         
+      argv[0]="vmmap"; argv[1]="-interleave"; argv[2]=elpid;argv[3]=NULL;
+      if (execvp(argv[0],argv)==-1) /*probamos vmmap Mac-OS*/
+         perror("cannot execute vmmap (Mac-OS)");      
+      exit(1);
+  }
+  waitpid (pid,NULL,0);
+}
 
 int memory(char* tokens[], int ntokens){
     
@@ -130,7 +214,7 @@ int memory(char* tokens[], int ntokens){
         printMemoryList();
     }
     if(opt_pmap){
-
+        Do_pmap();
     }
     if(opt_varsizes){
         printf("sizeof(int): %lu\n",sizeof(int));
@@ -145,8 +229,7 @@ void Recursiva (int n)
   static char estatico[TAMANO];
 
   printf ("parametro:%3d(%p) array %p, arr estatico %p\n",n,&n,automatico, estatico);
-
-  if (n>0)
+ if (n>0)
     Recursiva(n-1);
 }
 

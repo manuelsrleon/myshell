@@ -98,12 +98,12 @@ on the usage of comand cmd
     - [ ] deallocate addr
 - [ ] memfill addr cont ch
 - [ ] memdump addr cont
-- [ ] memory
+- [X] memory
     - [X] memory -funcs
     - [X] memory -blocks
     - [X] memory -vars
-    - [ ] memory -all --de momento no hace todas
-    - [ ] memory -pmap
+    - [X] memory -all
+    - [X] memory -pmap
     Con el parámetro `-funcs` imprimimos las direcciones de 3 funciones del programa y 3 funciones de librería. En la shell original vemos que las direcciones están en rangos de direcciones completamente distintos:
         ```
 Variables locales       0x7ffde0c9abcc,    0x7ffde0c9abc8,    0x7ffde0c9abc4
@@ -153,7 +153,10 @@ Por otra parte, el array de chars estático se inicializa junto a las variables 
 En las subsecuentes llamadas recursivas vemos cómo las nuevas llamadas van reservando memoria para las nuevas llamadas, mientras que el array estático permanece en la misma posición.
 
 
+## memfill y memdump
+Las funciones memfill addr cont ch y memdump addr cont trabajan llenando y volcando la memoria. La primera copia en un segmento de memoria que empiece por la dirección addr un caracter ch __cont__ veces. Para llenar la memoria se ha utilizado la función proporcionada en la práctica.
 
+La segunda imprime los contenidos en memoria a partir de la dirección addr, e imprime hasta addr+cont bytes.
 Fuentes:
 Storage classes en C - GeeksForGeeks
 C Program Structure - GeeksForGeeks

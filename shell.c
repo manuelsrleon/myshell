@@ -78,8 +78,8 @@ struct cmd cmds[] = {
         //P2
         {"allocate", allocate, ""},
         // {"deallocate", deallocate, ""},
-        // {"memfill", memfill, ""},
-        // {"memdump", memdump, ""},
+        {"memfill", memfill, ""},
+        {"memdump", memdump, ""},
          {"memory", memory, ""},
         // {"readfile", readfile, ""},
         // {"writefile", writefile, ""},
