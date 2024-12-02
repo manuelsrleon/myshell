@@ -77,14 +77,14 @@ struct cmd cmds[] = {
         // {"deltree", deltree, "Usage: deltree [name]\ndeletes files and/or non empty directories recursively\n\n"},
         //P2
         {"allocate", allocate, ""},
-        // {"deallocate", deallocate, ""},
+        {"deallocate", deallocate, ""},
         {"memfill", memfill, ""},
         {"memdump", memdump, ""},
-         {"memory", memory, ""},
-        // {"readfile", readfile, ""},
-        // {"writefile", writefile, ""},
-        // {"read", read, ""},
-        // {"write", write, ""},
+        {"memory", memory, ""},
+        {"readfile", readfile, ""},
+        {"writefile", writefile, ""},
+        {"read", _read, ""},
+        {"write", _write, ""},
         {"recurse", recurse, ""},
         //P3
         {NULL, NULL,"you shouldn't be able to read this."}

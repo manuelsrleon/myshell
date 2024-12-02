@@ -1,10 +1,10 @@
 int allocate(char* tokens[], int ntokens);
-// int deallocate(char* tokens[], int ntokens);
+int deallocate(char* tokens[], int ntokens);
 int memfill(char* tokens[], int ntokens);
 int memdump(char* tokens[], int ntokens);
 int memory(char* tokens[], int ntokens);
-// int readfile(char* tokens[], int ntokens);
-// int writefile(char* tokens[], int ntokens);
-// int read(char* tokens[], int ntokens);
-// int write(char* tokens[], int ntokens);
+int readfile(char* tokens[], int ntokens);
+int writefile(char* tokens[], int ntokens);
+int _read(char* tokens[], int ntokens);
+int _write(char* tokens[], int ntokens);
 int recurse(char* tokens[], int ntokens);

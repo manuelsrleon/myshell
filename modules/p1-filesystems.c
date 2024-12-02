@@ -213,7 +213,7 @@ int revlist(char *tokens[], int ntokens){
 int erase(char *tokens[], int ntokens){
     
     if(ntokens == 1){
-        exec_getcwd;
+        exec_getcwd();
         return 0;
     }
     for(int i=1;i<ntokens;i++){

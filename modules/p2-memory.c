@@ -6,6 +6,116 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/shm.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+void * MapearFichero (char * fichero, int protection)
+{
+    int df, map=MAP_PRIVATE,modo=O_RDONLY;
+    struct stat s;
+    void *p;
+
+    if (protection&PROT_WRITE)
+          modo=O_RDWR;
+    if (stat(fichero,&s)==-1 || (df=open(fichero, modo))==-1)
+          return NULL;
+    if ((p=mmap (NULL,s.st_size, protection,map,df,0))==MAP_FAILED)
+           return NULL;
+/* Guardar en la lista    InsertarNodoMmap (&L,p, s.st_size,df,fichero); */
+/* Gurdas en la lista de descriptores usados df, fichero*/
+    return p;
+}
+
+void * ObtenerMemoriaShmget (key_t clave, size_t tam)
+{
+    void * p;
+    int aux,id,flags=0777;
+    struct shmid_ds s;
+
+    if (tam)     /*tam distito de 0 indica crear */
+        flags=flags | IPC_CREAT | IPC_EXCL; /*cuando no es crear pasamos de tamano 0*/
+    if (clave==IPC_PRIVATE)  /*no nos vale*/
+        {errno=EINVAL; return NULL;}
+    if ((id=shmget(clave, tam, flags))==-1)
+        return (NULL);
+    if ((p=shmat(id,NULL,0))==(void*) -1){
+        aux=errno;
+        if (tam)
+             shmctl(id,IPC_RMID,NULL);
+        errno=aux;
+        return (NULL);
+    }
+    shmctl (id,IPC_STAT,&s); /* si no es crear, necesitamos el tamano, que es s.shm_segsz*/
+ /* Guardar en la lista   InsertarNodoShared (&L, p, s.shm_segsz, clave); */
+    return (p);
+}
+void do_AllocateCreateshared (char *tr[])
+{
+   key_t cl;
+   size_t tam;
+   void *p;
+
+   if (tr[0]==NULL || tr[1]==NULL) {
+		//ImprimirListaShared(&L);
+		return;
+   }
+  
+   cl=(key_t)  strtoul(tr[0],NULL,10);
+   tam=(size_t) strtoul(tr[1],NULL,10);
+   if (tam==0) {
+	printf ("No se asignan bloques de 0 bytes\n");
+	return;
+   }
+   if ((p=ObtenerMemoriaShmget(cl,tam))!=NULL)
+		printf ("Asignados %lu bytes en %p\n",(unsigned long) tam, p);
+   else
+		printf ("Imposible asignar memoria compartida clave %lu:%s\n",(unsigned long) cl,strerror(errno));
+}
+
+void do_AllocateShared (char *tr[])
+{
+   key_t cl;
+   //size_t tam;
+   void *p;
+
+   if (tr[0]==NULL) {
+		//ImprimirListaShared(&L);
+		return;
+   }
+  
+   cl=(key_t)  strtoul(tr[0],NULL,10);
+
+   if ((p=ObtenerMemoriaShmget(cl,0))!=NULL)
+		printf ("Asignada memoria compartida de clave %lu en %p\n",(unsigned long) cl, p);
+   else
+		printf ("Imposible asignar memoria compartida clave %lu:%s\n",(unsigned long) cl,strerror(errno));
+}
+
+void do_AllocateMmap(char *arg[])
+{ 
+     char *perm;
+     void *p;
+     int protection=0;
+     
+     if (arg[0]==NULL)
+            {//ImprimirListaMmap(&L); return;
+            }
+     if ((perm=arg[1])!=NULL && strlen(perm)<4) {
+            if (strchr(perm,'r')!=NULL) protection|=PROT_READ;
+            if (strchr(perm,'w')!=NULL) protection|=PROT_WRITE;
+            if (strchr(perm,'x')!=NULL) protection|=PROT_EXEC;
+     }
+     if ((p=MapearFichero(arg[0],protection))==NULL)
+             perror ("Imposible mapear fichero");
+     else
+             printf ("fichero %s mapeado en %p\n", arg[0], p);
+}
+
 
  int allocate(char* tokens[], int ntokens){
     
@@ -29,16 +139,16 @@
     
     //allocate -shared cl
     if(ntokens==3 && opt_shared){
-        
+        do_AllocateShared(&tokens[1]);
     }
     
     //allocate -mmap file perm
     if(ntokens==4 && opt_mmap){
-
+        do_AllocateMmap(&tokens[1]);
     }
     //allocate -create cl n
     if(ntokens==4 && opt_create){
-
+        do_AllocateCreateshared(&tokens[1]);
     }
     return 0;
 }
@@ -233,10 +343,62 @@ void Recursiva (int n)
     Recursiva(n-1);
 }
 
-// int readfile(char* tokens[], int ntokens);
-// int writefile(char* tokens[], int ntokens);
-// int read(char* tokens[], int ntokens);
-// int write(char* tokens[], int ntokens);
+ssize_t LeerFichero (char *f, void *p, size_t cont)
+{
+   struct stat s;
+   ssize_t  n;  
+   int df,aux;
+
+   if (stat (f,&s)==-1 || (df=open(f,O_RDONLY))==-1)
+	return -1;     
+   if (cont==-1)   /* si pasamos -1 como bytes a leer lo leemos entero*/
+	cont=s.st_size;
+   if ((n=read(df,p,cont))==-1){
+	aux=errno;
+	close(df);
+	errno=aux;
+	return -1;
+   }
+   close (df);
+   return n;
+}
+int readfile(char* tokens[], int ntokens){
+    if(ntokens == 4){ //readfile file addr cont
+        char* f = tokens[1]; //missing conversion functions
+        void *p = tokens[2];
+        size_t cont = tokens[3];
+        LeerFichero(f,p,cont);
+    }else{
+        perror("wrong syntax");
+    }
+    return 0;
+}
+int writefile(char* tokens[], int ntokens){
+    if(ntokens == 4){ //writefile file addr cont
+        //write();
+    }
+    return 0;
+}
+int _read(char* tokens[], int ntokens){
+    //read df addr cont
+    if(ntokens == 4){    
+        unsigned long df = strtoul(tokens[1],NULL, 10);
+        void * p = tokens[2];
+        int cont = strtoul(tokens[3],NULL,10);
+        int n = 0;
+        int aux;
+        if ((n=read(df,p,cont))==-1){
+            aux=errno;
+            close(df);
+            errno=aux;
+        return -1;
+    }
+   }
+   return 0;
+}
+int _write(char* tokens[], int ntokens){
+    return 0;
+}
 int recurse(char* tokens[], int ntokens){
     if(ntokens== 1){
         //printUsage
