@@ -14,6 +14,27 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+
+
+void do_DeallocateDelkey (char *args[])
+{
+   key_t clave;
+   int id;
+   char *key=args[0];
+
+   if (key==NULL || (clave=(key_t) strtoul(key,NULL,10))==IPC_PRIVATE){
+        printf ("      delkey necesita clave_valida\n");
+        return;
+   }
+   if ((id=shmget(clave,0,0666))==-1){
+        perror ("shmget: imposible obtener memoria compartida");
+        return;
+   }
+   if (shmctl(id,IPC_RMID,NULL)==-1)
+        perror ("shmctl: imposible eliminar memoria compartida\n");
+}
+
+
 void * MapearFichero (char * fichero, int protection)
 {
     int df, map=MAP_PRIVATE,modo=O_RDONLY;
@@ -156,8 +177,8 @@ int deallocate(char* tokens[], int ntokens){
     
     bool opt_malloc = has_token(tokens,ntokens, "-malloc");
     bool opt_mmap = has_token(tokens,ntokens, "-mmap");
-    bool opt_create = has_token(tokens,ntokens, "-create");
     bool opt_shared = has_token(tokens,ntokens, "-shared");
+    bool opt_delkey = has_token(tokens,ntokens, "-delkey");
 
     if(ntokens==1){
         //print assigned blocks
@@ -181,9 +202,9 @@ int deallocate(char* tokens[], int ntokens){
     if(ntokens==4 && opt_mmap){
 
     }
-    //deallocate -create cl n
-    if(ntokens==4 && opt_create){
-
+    //deallocate -delkey cl
+    if(ntokens==3 && opt_delkey){
+        do_DeallocateDelkey(&tokens[1]);
     }
     return 0;
 }
@@ -365,8 +386,8 @@ ssize_t LeerFichero (char *f, void *p, size_t cont)
 int readfile(char* tokens[], int ntokens){
     if(ntokens == 4){ //readfile file addr cont
         char* f = tokens[1]; //missing conversion functions
-        void *p = tokens[2];
-        size_t cont = tokens[3];
+        void *p = (void*)strtoull(tokens[2], NULL, 16);
+        size_t cont = strtoul(tokens[3],NULL,10);
         LeerFichero(f,p,cont);
     }else{
         perror("wrong syntax");
