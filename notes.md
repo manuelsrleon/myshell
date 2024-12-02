@@ -86,16 +86,16 @@ on the usage of comand cmd
 - [ ] List implementation
 
 - [ ] allocate
-    - [ ] allocate -malloc -n
+    - [X] allocate -malloc -n
     - [ ] allocate -mmap file perm
     - [ ] allocate -create cl n
     - [ ] allocate -shared cl
 - [ ] deallocate
-    - [ ] deallocate -malloc
+    - [X] deallocate -malloc
     - [ ] deallocate -mmap
     - [ ] deallocate -shared cl
     - [ ] deallocate -delkey cl
-    - [ ] deallocate addr
+- [ ] List implementation
 - [ ] memfill addr cont ch
 - [ ] memdump addr cont
 - [X] memory
