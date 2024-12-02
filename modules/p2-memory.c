@@ -142,7 +142,7 @@ void do_AllocateMmap(char *arg[])
     
     bool opt_malloc = has_token(tokens,ntokens, "-malloc");
     bool opt_mmap = has_token(tokens,ntokens, "-mmap");
-    bool opt_create = has_token(tokens,ntokens, "-create");
+    bool opt_createshared = has_token(tokens,ntokens, "-createshared");
     bool opt_shared = has_token(tokens,ntokens, "-shared");
 
     if(ntokens==1){
@@ -158,17 +158,17 @@ void do_AllocateMmap(char *arg[])
         //save in list
     }
     
-    //allocate -shared cl
-    if(ntokens==3 && opt_shared){
-        do_AllocateShared(&tokens[1]);
+    //allocate -createshared cl n
+    if(ntokens==3 && opt_createshared){
+        do_AllocateCreateshared(&tokens[1]);
     }
     
     //allocate -mmap file perm
     if(ntokens==4 && opt_mmap){
         do_AllocateMmap(&tokens[1]);
     }
-    //allocate -create cl n
-    if(ntokens==4 && opt_create){
+    //allocate -shared cl n
+    if(ntokens==4 && opt_shared){
         do_AllocateCreateshared(&tokens[1]);
     }
     return 0;
@@ -195,7 +195,7 @@ int deallocate(char* tokens[], int ntokens){
     
     //deallocate -shared cl
     if(ntokens==3 && opt_shared){
-        
+
     }
     
     //deallocate -mmap file perm
