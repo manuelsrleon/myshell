@@ -182,4 +182,25 @@ exec
 centrarse en listas
 que funcione ejecutar procesos en bg y fg sin crear nuevo proceso.
 
-
+17 funciones.
+- [ ] getuid
+- [ ] setuid [-l] id
+- [ ] showvar v1 v2...
+- [ ] changevar [-a|-e|-p] var val
+- [ ] subsvar [-a|-e] v1 v2 val
+- [ ] environ [-environ|-addr]
+- [ ] fork
+- [ ] search
+    - [ ] search -add dir
+    - [ ] search -del dir
+    - [ ] search clear
+    - [ ] path
+- [ ] exec progspec
+- [ ] execpri prio progspec
+- [ ] fg progspec
+- [ ] fgpri prio progspec
+- [ ] back progspec
+- [ ] backpri prio progspec
+- [ ] listjobs
+- [ ] deljobs -term|-sig
+- [ ] ******* (R)
