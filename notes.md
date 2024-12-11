@@ -87,25 +87,28 @@ on the usage of comand cmd
 
 - [ ] allocate
     - [X] allocate -malloc -n
-    - [ ] allocate -mmap file perm
-    - [ ] allocate -create cl n
-    - [ ] allocate -shared cl
+    - [-] allocate -mmap file perm
+    - [-] allocate -create cl n
+    - [-] allocate -shared cl
 - [ ] deallocate
     - [X] deallocate -malloc
     - [ ] deallocate -mmap
     - [ ] deallocate -shared cl
     - [ ] deallocate -delkey cl
-- [ ] List implementation
-- [ ] memfill addr cont ch
-- [ ] memdump addr cont
+- [-] read
+- [-] write
+- [-] memfill addr cont ch
+- [-] memdump addr cont
 - [X] memory
     - [X] memory -funcs
     - [X] memory -blocks
     - [X] memory -vars
     - [X] memory -all
     - [X] memory -pmap
-    Con el parámetro `-funcs` imprimimos las direcciones de 3 funciones del programa y 3 funciones de librería. En la shell original vemos que las direcciones están en rangos de direcciones completamente distintos:
-        ```
+
+Con el parámetro `-funcs` imprimimos las direcciones de 3 funciones del programa y 3 funciones de librería. En la shell original vemos que las direcciones están en rangos de direcciones completamente distintos:
+
+```
 Variables locales       0x7ffde0c9abcc,    0x7ffde0c9abc8,    0x7ffde0c9abc4
 Variables globales      0x562111f862f8,    0x562111f862f0,    0x562111f862f4
 Var (N.I.)globales      0x562111f97e68,    0x562111f97e70,    0x562111f97e78
@@ -160,3 +163,21 @@ La segunda imprime los contenidos en memoria a partir de la dirección addr, e i
 Fuentes:
 Storage classes en C - GeeksForGeeks
 C Program Structure - GeeksForGeeks
+
+# p3
+getuid
+setuid
+environ
+fork
+hacer fork (syscall) y esperar a que el hijo termine
+search () (es nuestro path)
+añadirmos y quitamos directorios de nuestra lista.
+exec
+execpri
+fg
+fgpri
+back ls no ha vuelto el proceso
+exec 
+
+centrarse en listas
+que funcione ejecutar procesos en bg y fg sin crear nuevo proceso.
