@@ -13,8 +13,24 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <pwd.h>
 
-int getuid_cmd(char* tokens[], int ntokens);
+int getuid_cmd(char* tokens[], int ntokens){
+    //getuid
+    if(ntokens == 1){
+        uid_t r_uid = getuid(); //get real credential
+        uid_t e_uid = geteuid(); //get effective credential
+        struct passwd* r_passwd = getpwuid(r_uid); 
+        struct passwd* e_passwd = getpwuid(e_uid);
+        printf("Real credential: %d, (%s)\n",r_uid, r_passwd->pw_name);
+        printf("Effective credential:  %d, (%s)\n",e_uid, e_passwd->pw_name);
+
+    }else{
+        throwWrongSyntaxError("getuid");
+        return 0;
+    }
+    return 0;
+}
 int setuid_cmd(char* tokens[], int ntokens);
 int showvar_cmd(char* tokens[], int ntokens);
 int changevar_cmd(char* tokens[], int ntokens);

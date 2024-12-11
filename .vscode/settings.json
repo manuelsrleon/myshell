@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "p1-filesystems.h": "c",
-        "p0-clangintro.h": "c"
+        "p0-clangintro.h": "c",
+        "stat.h": "c"
     }
 }
