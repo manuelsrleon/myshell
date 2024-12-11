@@ -1,9 +1,9 @@
 #make file - this is a comment section
-ASSIGNMENT_ITERATION=shell
+ASSIGNMENT_ITERATION=p3
 MODULES_DIR=modules
 
-all: $(ASSIGNMENT_ITERATION).c p0lib p1lib p2lib cmdlist memorylist
-	gcc -Wall -g -O0 -o $(ASSIGNMENT_ITERATION) $(ASSIGNMENT_ITERATION).c p0lib.o p1lib.o p2lib.o cmdlist.o memorylist.o
+all: $(ASSIGNMENT_ITERATION).c p0lib p1lib p2lib p3lib cmdlist memorylist
+	gcc -Wall -g -O0 -o $(ASSIGNMENT_ITERATION) $(ASSIGNMENT_ITERATION).c p0lib.o p1lib.o p2lib.o p3lib.o cmdlist.o memorylist.o
 cmdlist:
 	gcc -Wall -c $(MODULES_DIR)/cmdlist/cmdlist.c -o cmdlist.o
 memorylist:
@@ -14,6 +14,8 @@ p1lib:
 	gcc -Wall -g -c $(MODULES_DIR)/p1-filesystems.c -o p1lib.o
 p2lib:
 	gcc -Wall -g -c $(MODULES_DIR)/p2-memory.c -o p2lib.o
+p3lib:
+	gcc -Wall -g -c $(MODULES_DIR)/p3-processes.c -o p3lib.o
 clean:
 	rm *.o $(ASSIGNMENT_ITERATION)
 run:

@@ -182,7 +182,7 @@ exec
 centrarse en listas
 que funcione ejecutar procesos en bg y fg sin crear nuevo proceso.
 
-17 funciones.
+17 funciones. Good luck.
 - [ ] getuid
 - [ ] setuid [-l] id
 - [ ] showvar v1 v2...
@@ -204,3 +204,41 @@ que funcione ejecutar procesos en bg y fg sin crear nuevo proceso.
 - [ ] listjobs
 - [ ] deljobs -term|-sig
 - [ ] ******* (R)
+
+Two lists must be implemented: search and process list
+
+### Process list
+    background processes. -> Only processes created with back or backpri
+    process entity fields:
+        - pid
+        - launch timestamp
+        - status: [FINISHED, STOPED, SIGNALED, ACTIVE]
+        - command line
+        - ~~priority~~ (-> obtained at runtime, no need to store)
+    
+    listjobs and deljobs manipulate the list
+    
+    Processes in the list are always inserted as active
+    waitpid updates the process before printing -- waitpid only reports status changes, not the state itself. Only reports ONCE that a porocess has finished
+    pid_t waitpid (pid_t pid, int *wstatus, int options)
+    Priority should be obtained at the time of printing, so we don't need to store it
+    Background is concurrent execution. Does not wait for its child to finish
+
+### Search list
+
+List of directories where the shell looks for executable files.
+
+This is a simple list of directories where the shell looks for executes.
+Execvp searches for exeutables in the list, we're using execve instead because we can pass an alternate environment.
+
+Ejecutable takes care of finding an exec in the search list. Two examples provided
+
+### Progspec:
+[VAR1 VAR2 VAR3 ] executablefile arg1 arg2
+executablefile is the name of the exec file
+
+### Credentials 
+setuid to change user credential. Real and effective credentials will be the same.
+
+setuid rwsr-xr-x (4755)
+- execute by another user f
