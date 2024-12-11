@@ -181,3 +181,5 @@ exec
 
 centrarse en listas
 que funcione ejecutar procesos en bg y fg sin crear nuevo proceso.
+
+
