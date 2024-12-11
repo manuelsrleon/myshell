@@ -31,7 +31,29 @@ int getuid_cmd(char* tokens[], int ntokens){
     }
     return 0;
 }
-int setuid_cmd(char* tokens[], int ntokens);
+int setuid_cmd(char* tokens[], int ntokens) { 
+
+    bool opt_l = has_token(tokens,ntokens,"-l");
+    if(ntokens == 2) { //setuid id 
+        uid_t uid = strtoul(tokens[1],NULL,10);
+        if(setuid(uid) != 0){
+            perror("setuid");
+        }
+    }else if(ntokens==3 && opt_l){ //setuid -l id
+
+        struct passwd* l_pw;
+        if((l_pw = getpwnam(tokens[2])) == NULL){
+            perror("setuid");
+        }
+
+        if(setuid(l_pw->pw_uid) != 0){
+            perror("setuid");
+        };
+    }else{
+        perror("setuid");
+    }
+    return 0;
+}
 int showvar_cmd(char* tokens[], int ntokens);
 int changevar_cmd(char* tokens[], int ntokens);
 int subsvar_cmd(char* tokens[], int ntokens);

@@ -183,7 +183,7 @@ centrarse en listas
 que funcione ejecutar procesos en bg y fg sin crear nuevo proceso.
 
 17 funciones. Good luck.
-- [ ] getuid
+- [X] getuid
 - [ ] setuid [-l] id
 - [ ] showvar v1 v2...
 - [ ] changevar [-a|-e|-p] var val
