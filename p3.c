@@ -91,6 +91,7 @@ struct cmd cmds[] = {
         //P3
         {"getuid", getuid_cmd, ""},
         {"setuid", setuid_cmd, ""},
+        {"fork", fork_cmd, ""},
         {NULL, NULL,"you shouldn't be able to read this."}
 };
 

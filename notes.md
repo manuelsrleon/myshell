@@ -184,7 +184,7 @@ que funcione ejecutar procesos en bg y fg sin crear nuevo proceso.
 
 17 funciones. Good luck.
 - [X] getuid
-- [ ] setuid [-l] id
+- [X] setuid [-l] id
 - [ ] showvar v1 v2...
 - [ ] changevar [-a|-e|-p] var val
 - [ ] subsvar [-a|-e] v1 v2 val

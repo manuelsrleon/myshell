@@ -58,7 +58,23 @@ int showvar_cmd(char* tokens[], int ntokens);
 int changevar_cmd(char* tokens[], int ntokens);
 int subsvar_cmd(char* tokens[], int ntokens);
 int environ_cmd(char* tokens[], int ntokens);
-int fork_cmd(char* tokens[], int ntokens);
+int fork_cmd(char* tokens[], int ntokens){
+    pid_t pid = fork();
+
+    if (pid < 0) {
+        perror("fork failed");
+        return 0;
+    } else if (pid == 0) {
+        // In child process
+        printf("Executing process %d\n",getpid());
+    } else {
+        // In parent process
+        int status;
+        waitpid(pid, &status, 0); // Wait for the child to finish
+        return 0;
+    }
+    return 0;
+}
 int search_cmd(char* tokens[], int ntokens);
 int exec_cmd(char* tokens[], int ntokens);
 int execpri_cmd(char* tokens[], int ntokens);
